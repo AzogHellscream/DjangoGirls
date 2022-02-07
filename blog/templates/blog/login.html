@@ -8,4 +8,5 @@
         {% csrf_token %}
         <p><input type="submit" value="Log-in"></p>
     </form>
+    <p>You are first time here? <a href="{% url 'register' %}">Registration link</a> </p>
 {% endblock %}

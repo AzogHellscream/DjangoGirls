@@ -18,6 +18,7 @@ class LoginForm(forms.Form):
 class UserRegistrationForm(forms.ModelForm):
     password = forms.CharField(label='Password', widget=forms.PasswordInput)
     password2 = forms.CharField(label='Repeat password', widget=forms.PasswordInput)
+    redirect_checkbox = forms.BooleanField(label='Login after registration')
 
     class Meta:
         model = User
@@ -34,3 +35,8 @@ class UserRegistrationForm(forms.ModelForm):
         if str(cd['email']).find('@gcore.lu') == -1:
             raise forms.ValidationError('Email must be in domen @gcore.lu')
         return cd['email']
+
+
+#class LoginRedirectCheckbox(forms.Form):
+#    redirect_checkbox = forms.BooleanField(help_text="Login after registration")
+
