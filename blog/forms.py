@@ -14,6 +14,17 @@ class LoginForm(forms.Form):
     username = forms.CharField()
     password = forms.CharField(widget=forms.PasswordInput)
 
+    def clean_loginform(self):
+        cleaned_data = super(LoginForm, self).clean()
+        username = self.cleaned_data['username']
+        password = self.cleaned_data['password']
+        if not User.objects.filter(username=username).exists():
+            raise forms.ValidationError('User not found')
+
+        user = User.objects.get(username=username)
+        if user and not user.check_password(password):
+            raise forms.ValidationError('Wrong password')
+
 
 class UserRegistrationForm(forms.ModelForm):
     password = forms.CharField(label='Password', widget=forms.PasswordInput)

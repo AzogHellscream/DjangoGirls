@@ -1,3 +1,4 @@
+from django import forms
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse, HttpResponseRedirect
@@ -48,19 +49,17 @@ def post_edit(request, pk):
 
 
 def user_login(request):
+
     if request.method == 'POST':
         form = LoginForm(request.POST)
+
         if form.is_valid():
-            cd = form.cleaned_data
-            user = authenticate(username=cd['username'], password=cd['password'])
-            if user is not None:
-                if user.is_active:
-                    login(request, user)
-                    return HttpResponse('Authenticated successfully')
-                else:
-                    return HttpResponse('Disabled account')
-            else:
-                return HttpResponse('Invalid login')
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            login_user = authenticate(username=username, password=password)
+            if login_user:
+                login(request, login_user)
+                return redirect('post_list', permanent=True)
     else:
         form = LoginForm()
     return render(request, 'blog/login.html', {'form': form})
@@ -80,7 +79,7 @@ def register(request):
                                     password=user_form.cleaned_data['password'],
                                     )
             login(request, new_user)
-            return render(request, 'blog/post_list.html', {'new_user': new_user})
+            return redirect('post_list', permanent=True)
         elif user_form.is_valid():
             # Create a new user object but avoid saving it yet
             new_user = user_form.save(commit=False)
