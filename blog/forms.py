@@ -14,8 +14,9 @@ class LoginForm(forms.Form):
     username = forms.CharField()
     password = forms.CharField(widget=forms.PasswordInput)
 
-    def clean_loginform(self):
-        cleaned_data = super(LoginForm, self).clean()
+    # def clean_loginform(self):
+    def clean_password(self):
+        #cleaned_data = super(LoginForm, self).clean()
         username = self.cleaned_data['username']
         password = self.cleaned_data['password']
         if not User.objects.filter(username=username).exists():
@@ -29,7 +30,7 @@ class LoginForm(forms.Form):
 class UserRegistrationForm(forms.ModelForm):
     password = forms.CharField(label='Password', widget=forms.PasswordInput)
     password2 = forms.CharField(label='Repeat password', widget=forms.PasswordInput)
-    redirect_checkbox = forms.BooleanField(label='Login after registration')
+    redirect_checkbox = forms.BooleanField(label='Login after registration', required=False)
 
     class Meta:
         model = User
@@ -47,7 +48,4 @@ class UserRegistrationForm(forms.ModelForm):
             raise forms.ValidationError('Email must be in domen @gcore.lu')
         return cd['email']
 
-
-#class LoginRedirectCheckbox(forms.Form):
-#    redirect_checkbox = forms.BooleanField(help_text="Login after registration")
 

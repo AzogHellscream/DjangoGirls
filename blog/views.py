@@ -68,7 +68,7 @@ def user_login(request):
 def register(request):
     if request.method == 'POST':
         user_form = UserRegistrationForm(request.POST)
-        if user_form.is_valid() and user_form['redirect_checkbox']:
+        if user_form.is_valid() and user_form.cleaned_data['redirect_checkbox']:
             # Create a new user object but avoid saving it yet
             new_user = user_form.save(commit=False)
             # Set the chosen password
