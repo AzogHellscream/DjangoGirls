@@ -1,0 +1,8 @@
+{% extends "blog/base.html" %}
+
+{% block title %}Welcome{% endblock %}
+
+{% block content %}
+    <h1>Logout successful</h1>
+<p>Your account has been successfully logout. Now you can <a href="{% url 'user_login' %}">login</a> or go to <a href="{% url 'post_list' %}">home page</a>.</p>
+{% endblock %}

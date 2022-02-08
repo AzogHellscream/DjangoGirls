@@ -1,7 +1,10 @@
+from django import forms
 from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth import authenticate, login, logout
+from django.http import HttpResponse, HttpResponseRedirect
 from django.utils import timezone
 from .models import Post
-from .forms import PostForm
+from .forms import PostForm, LoginForm, UserRegistrationForm
 
 # Create your views here.
 
@@ -43,3 +46,52 @@ def post_edit(request, pk):
     else:
         form = PostForm(instance=post)
     return render(request, 'blog/post_edit.html', {'form': form})
+
+
+def user_login(request):
+
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            login_user = authenticate(username=username, password=password)
+            if login_user:
+                login(request, login_user)
+                return redirect('post_list', permanent=True)
+    else:
+        form = LoginForm()
+    return render(request, 'blog/login.html', {'form': form})
+
+
+def register(request):
+    if request.method == 'POST':
+        user_form = UserRegistrationForm(request.POST)
+        if user_form.is_valid() and user_form.cleaned_data['redirect_checkbox']:
+            # Create a new user object but avoid saving it yet
+            new_user = user_form.save(commit=False)
+            # Set the chosen password
+            new_user.set_password(user_form.cleaned_data['password'])
+            # Save the User object
+            new_user.save()
+            new_user = authenticate(username=user_form.cleaned_data['username'],
+                                    password=user_form.cleaned_data['password'],
+                                    )
+            login(request, new_user)
+            return redirect('post_list', permanent=True)
+        elif user_form.is_valid():
+            # Create a new user object but avoid saving it yet
+            new_user = user_form.save(commit=False)
+            # Set the chosen password
+            new_user.set_password(user_form.cleaned_data['password'])
+            # Save the User object
+            new_user.save()
+            return render(request, 'blog/register_done_need_login.html', {'new_user': new_user})
+    else:
+        user_form = UserRegistrationForm()
+    return render(request, 'blog/register.html', {'user_form': user_form})
+
+
+def logout_view(request):
+    logout(request)
