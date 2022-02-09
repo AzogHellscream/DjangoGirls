@@ -1,7 +1,5 @@
-from django import forms
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import authenticate, login, logout
-from django.http import HttpResponse, HttpResponseRedirect
 from django.utils import timezone
 from .models import Post
 from .forms import PostForm, LoginForm, UserRegistrationForm

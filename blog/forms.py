@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 
 
 class PostForm(forms.ModelForm):
+    pic = forms.ImageField(required=False)
 
     class Meta:
         model = Post
@@ -42,7 +43,6 @@ class LoginForm(forms.Form):
         return password
 
 
-
 class UserRegistrationForm(forms.ModelForm):
     password = forms.CharField(label='Password', widget=forms.PasswordInput)
     password2 = forms.CharField(label='Repeat password', widget=forms.PasswordInput)
@@ -63,5 +63,3 @@ class UserRegistrationForm(forms.ModelForm):
         if str(cd['email']).find('@gcore.lu') == -1:
             raise forms.ValidationError('Email must be in domen @gcore.lu')
         return cd['email']
-
-
