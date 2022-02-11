@@ -1,6 +1,5 @@
 import random
 import os
-from uuid import uuid4
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
@@ -15,15 +14,10 @@ def filename_gen():
 
 
 def path_and_rename(instance, filename):
-    upload_to = 'pictures'
     ext = filename.split('.')[-1]
-    # get filename
-    if instance.pk:
-        filename = '{}.{}'.format(instance.pk, ext)
-    else:
-        # set filename as random string
-        filename = '{}.{}'.format(uuid4().hex, ext)
-    # return the whole path to the file
+    generated_filename = filename_gen()
+    filename = '{}.{}'.format(generated_filename, ext)
+    upload_to = filename[:3]
     return os.path.join(upload_to, filename)
 
 
