@@ -4,17 +4,18 @@ from django.contrib.auth.models import User
 
 
 class PostForm(forms.ModelForm):
+    pic = forms.ImageField(required=False)
 
     class Meta:
         model = Post
-        fields = ('title', 'text',)
+        fields = ('title', 'text', 'pic',)
 
 
 class LoginForm(forms.Form):
     username = forms.CharField()
     password = forms.CharField(widget=forms.PasswordInput)
-    '''
-    def clean_password(self):
+
+    def clean(self):
         cleaned_data = super(LoginForm, self).clean()
         username = self.cleaned_data['username']
         password = self.cleaned_data['password']
@@ -24,23 +25,6 @@ class LoginForm(forms.Form):
         user = User.objects.get(username=username)
         if user and not user.check_password(password):
             raise forms.ValidationError('Wrong password')
-        return username, password
-    '''
-
-    def clean_username(self):
-        username = self.cleaned_data['username']
-        if not User.objects.filter(username=username).exists():
-            raise forms.ValidationError('User not found', code='User not found')
-        return username
-
-    def clean_password(self):
-        username = self.cleaned_data['username']
-        password = self.cleaned_data['password']
-        user = User.objects.get(username=username)
-        if user and not user.check_password(password):
-            raise forms.ValidationError('Wrong password', code='Wrong password')
-        return password
-
 
 
 class UserRegistrationForm(forms.ModelForm):
@@ -63,5 +47,3 @@ class UserRegistrationForm(forms.ModelForm):
         if str(cd['email']).find('@gcore.lu') == -1:
             raise forms.ValidationError('Email must be in domen @gcore.lu')
         return cd['email']
-
-
