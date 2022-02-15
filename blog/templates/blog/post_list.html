@@ -8,7 +8,7 @@
             </div>
             <h1><a href="{% url 'post_detail' pk=post.pk %}">{{ post.title }}</a></h1>
             {% if post.tags.all %}
-            <p class="tags">Tags: {{ post.tags.all|join:", " }}</p>
+                <p class="tags">Tags: {{ post.tags.all|join:", " }}</p>
             {% endif %}
             <p>{{ post.text }}</p>
             {% if post.pic %}
