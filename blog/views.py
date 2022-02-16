@@ -4,6 +4,7 @@ from django.utils import timezone
 from django.template.defaultfilters import slugify
 from .models import Post
 from .forms import PostForm, LoginForm, UserRegistrationForm
+import re
 from taggit.models import Tag
 
 # Create your views here.
@@ -28,7 +29,10 @@ def post_new(request):
             post.published_date = timezone.now()
             post.slug = slugify(post.title)
             post.save()
-            post.tags.add(*[item for item in form.cleaned_data['tags']])  # add tags on post
+            text = form.cleaned_data['text']
+            hashtags = list(set([re.sub(r"(\W+)$", "", j) for j in set([i for i in text.split() if i.startswith("#")])]))
+            post.tags.add(*[item for item in hashtags])
+            #post.tags.add(*[item for item in form.cleaned_data['tags']])  # add tags on post
             return redirect('post_detail', pk=post.pk)
     else:
         form = PostForm()
