@@ -30,9 +30,9 @@ def post_new(request):
             post.slug = slugify(post.title)
             post.save()
             text = form.cleaned_data['text']
-            hashtags = list(set([re.sub(r"(\W+)$", "", j) for j in set([i for i in text.split() if i.startswith("#")])]))
+            # This construction get hashtags from text, then put them in DataBase without #
+            hashtags = (n.replace('#', '') for n in list(set([re.sub(r"(\W+)$", "", j) for j in set([i for i in text.split() if i.startswith("#")])])))
             post.tags.add(*[item for item in hashtags])
-            #post.tags.add(*[item for item in form.cleaned_data['tags']])  # add tags on post
             return redirect('post_detail', pk=post.pk)
     else:
         form = PostForm()
