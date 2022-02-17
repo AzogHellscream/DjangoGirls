@@ -1,0 +1,11 @@
+{% extends 'blog/base.html' %}
+
+{% block content %}
+    {% for tag in sorted_dict %}
+        <div class="post">
+            <div class="date">
+                {{ tag }}
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}

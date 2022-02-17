@@ -6,6 +6,7 @@ from .models import Post
 from .forms import PostForm, LoginForm, UserRegistrationForm
 import re
 from taggit.models import Tag
+from collections import Counter
 
 # Create your views here.
 
@@ -99,5 +100,20 @@ def register(request):
     return render(request, 'blog/register.html', {'user_form': user_form})
 
 
-def logout_view(request):
-    logout(request)
+def top_ten_tags(request):
+    used_tags = []
+    # Cycle gives list of all used tags in var 'used_tags'
+    for post in Post.objects.all():
+        for tag in Post.objects.get(title=post).tags.all():
+            used_tags.append(tag)
+
+    unsorted_values = Counter(used_tags)  # Here makes dict {Tag: Number of uses}
+    sorted_values = sorted(unsorted_values.values(), reverse=True)  # Sort the values
+    sorted_dict = {}
+
+    for i in sorted_values[:9]:  # :9 means that we get top-10 tags
+        for k in unsorted_values.keys():
+            if unsorted_values[k] == i:
+                sorted_dict[k] = unsorted_values[k]
+                #break
+    return render(request, 'blog/top_ten_tags.html', {'sorted_dict': sorted_dict})
