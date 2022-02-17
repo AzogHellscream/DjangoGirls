@@ -115,5 +115,4 @@ def top_ten_tags(request):
         for k in unsorted_values.keys():
             if unsorted_values[k] == i:
                 sorted_dict[k] = unsorted_values[k]
-                #break
     return render(request, 'blog/top_ten_tags.html', {'sorted_dict': sorted_dict})
