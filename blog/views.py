@@ -113,6 +113,6 @@ def top_ten_tags(request):
 
     for i in sorted_values[:9]:  # :9 means that we get top-10 tags
         for k in unsorted_values.keys():
-            if unsorted_values[k] == i:
+            if unsorted_values[k] == i and len(sorted_dict) < 10:
                 sorted_dict[k] = unsorted_values[k]
     return render(request, 'blog/top_ten_tags.html', {'sorted_dict': sorted_dict})
