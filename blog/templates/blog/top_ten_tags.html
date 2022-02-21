@@ -1,0 +1,12 @@
+{% extends 'blog/base.html' %}
+
+{% block content %}
+    <h2>Top 10 most popular tags:</h2>
+    {% for key, value in sorted_dict.items %}
+        <div>
+            <div>
+                <h3>#{{ key }} meets in posts {{ value }} times</h3>
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}

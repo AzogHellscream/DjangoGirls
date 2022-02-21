@@ -3,6 +3,7 @@ import os
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
+from taggit.managers import TaggableManager
 
 
 def filename_gen():
@@ -28,6 +29,8 @@ class Post(models.Model):
     pic = models.ImageField(upload_to=path_and_rename, null=True, max_length=1000)
     created_date = models.DateTimeField(default=timezone.now)
     published_date = models.DateTimeField(blank=True, null=True)
+    slug = models.SlugField(unique=True, max_length=100, null=True)
+    tags = TaggableManager()
 
     def publish(self):
         self.published_date = timezone.now()
