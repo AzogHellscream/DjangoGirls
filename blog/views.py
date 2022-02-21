@@ -7,8 +7,11 @@ from .forms import PostForm, LoginForm, UserRegistrationForm
 import re
 from taggit.models import Tag
 from collections import Counter
+from rest_framework import generics
+from .serializers import PostSerializer
 
 # Create your views here.
+
 
 
 def post_list(request):
@@ -116,3 +119,8 @@ def top_ten_tags(request):
             if unsorted_values[k] == i and len(sorted_dict) < 10:
                 sorted_dict[k] = unsorted_values[k]
     return render(request, 'blog/top_ten_tags.html', {'sorted_dict': sorted_dict})
+
+
+class PostAPIView(generics.ListAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
