@@ -1,8 +1,9 @@
+from django.contrib.auth.models import User
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.utils import timezone
 from django.template.defaultfilters import slugify
-from .models import Post
+from .models import Post, PostViews
 from .forms import PostForm, LoginForm, UserRegistrationForm
 import re
 from taggit.models import Tag
@@ -21,6 +22,9 @@ def post_list(request):
 
 def post_detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
+    if request.user.pk is not None:
+        viewed_post = PostViews(user=request.user, post=post)
+        viewed_post.save()
     return render(request, 'blog/post_detail.html', {'post': post})
 
 
