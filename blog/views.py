@@ -1,4 +1,3 @@
-from django.contrib.auth.models import User
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.utils import timezone
@@ -8,9 +7,10 @@ from .forms import PostForm, LoginForm, UserRegistrationForm
 import re
 from taggit.models import Tag
 from collections import Counter
-from rest_framework import generics
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 from .serializers import PostSerializer
-
+from rest_framework import generics
 # Create your views here.
 
 
@@ -125,6 +125,39 @@ def top_ten_tags(request):
     return render(request, 'blog/top_ten_tags.html', {'sorted_dict': sorted_dict})
 
 
+# class PostAPIView(generics.ListAPIView):
+#     queryset = Post.objects.all()
+#     serializer_class = PostSerializer
+
+
 class PostAPIView(generics.ListAPIView):
-    queryset = Post.objects.all()
+    #queryset = Post.objects.exclude()  # exclude title__in=filtered_set
     serializer_class = PostSerializer
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def get_queryset(self):
+        user = self.request.user
+        viewed_posts = PostViews.objects.filter(user=user)
+        filtered_set = set()
+        for i in viewed_posts:
+            filtered_set.add(i.post)
+        result = Post.objects.exclude(title__in=filtered_set)
+        return result
+
+    # def get(self, request, *args, **kwargs):
+    #     viewed_posts = PostViews.objects.filter(user=request.user)
+    #     filtered_set = set()
+    #     for i in viewed_posts:
+    #         filtered_set.add(i.post)
+    #     return Response(Post.objects.exclude(title__in=filtered_set))
+
+
+@api_view(['GET'])
+def post_api_view2(request):
+    # viewed_posts = PostViews.objects.filter(user=request.user)
+    # filtered_set = set()
+    # for i in viewed_posts:
+    #     filtered_set.add(i.post)
+    return Response(Post.objects.exclude())

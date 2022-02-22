@@ -12,4 +12,5 @@ urlpatterns = [
     path('logout/', auth_views.LogoutView.as_view(template_name='blog/logout.html'), name='logout'),
     path('top10/', views.top_ten_tags, name='top_ten_tags'),
     path('api/v1/postlist/', views.PostAPIView.as_view(), name='PostAPIView'),
+    path('api/v1/post_api_view2/', views.post_api_view2, name='post_api_view2'),
 ]
