@@ -2,13 +2,15 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.utils import timezone
 from django.template.defaultfilters import slugify
-from .models import Post
+from .models import Post, PostViews
 from .forms import PostForm, LoginForm, UserRegistrationForm
 import re
 from taggit.models import Tag
 from collections import Counter
-
+from .serializers import PostSerializer
+from rest_framework import generics
 # Create your views here.
+
 
 
 def post_list(request):
@@ -18,6 +20,9 @@ def post_list(request):
 
 def post_detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
+    if request.user.pk is not None:
+        viewed_post = PostViews(user=request.user, post=post)
+        viewed_post.save()
     return render(request, 'blog/post_detail.html', {'post': post})
 
 
@@ -116,3 +121,19 @@ def top_ten_tags(request):
             if unsorted_values[k] == i and len(sorted_dict) < 10:
                 sorted_dict[k] = unsorted_values[k]
     return render(request, 'blog/top_ten_tags.html', {'sorted_dict': sorted_dict})
+
+
+class PostAPIView(generics.ListAPIView):
+    serializer_class = PostSerializer
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def get_queryset(self):
+        user = self.request.user
+        viewed_posts = PostViews.objects.filter(user=user)
+        filtered_set = set()
+        for i in viewed_posts:
+            filtered_set.add(i.post)
+        result = Post.objects.exclude(title__in=filtered_set)
+        return result
